@@ -134,12 +134,13 @@ def genCommand(string, command):
         command.rICS = 0
 
     if parsed[0] == 'ics1':
+        # command.rPRS = current scissor axis
         command.rSPS = 255
         command.rFRS = 150
         command.rICS = 1
 
     # control the value of position, speed or force of finger or scissor
-    if parsed[0] in ['A', 'B', 'C', 'S']:
+    if parsed[0] in ['A', 'B', 'C', 'S', 'all']:
         # cannot control fingers individually
         if command.rICF == 0:
             print("rICF must be 1 to control fingers individually.\nInput \"icf1\" first.")
@@ -147,6 +148,7 @@ def genCommand(string, command):
 
         if len(parsed) < 3:
             print("Wrong command usage.\nProper example: \"A pos 128\"")
+            return command
 
         # get the new value of register from input command
         try:
@@ -155,7 +157,7 @@ def genCommand(string, command):
                 value = 255
             if value < 0:
                 value = 0
-        except (ValueError, IndexError):
+        except ValueError:
             return command
         
         if parsed[0] == 'A':
@@ -189,8 +191,20 @@ def genCommand(string, command):
                 command.rSPS = value
             if parsed[1] == 'force':
                 command.rFRS = value
-        
-    
+
+        if parsed[0] == 'all':
+            if parsed[1] == 'pos':
+                command.rPRA = value
+                command.rPRB = value
+                command.rPRC = value
+            if parsed[1] == 'speed':
+                command.rSPA = value
+                command.rSPB = value
+                command.rSPC = value
+            if parsed[1] == 'force':
+                command.rFRA = value
+                command.rFRB = value
+                command.rFRC = value
 
     return command
 
@@ -204,12 +218,12 @@ def makeCurrentCommand(command):
     currentCommand += 'Scissor   : ' + str(command.rICS) + '\n'
     currentCommand += '\n'
     currentCommand += '         | pos | speed | force\n'
-    currentCommand += '------------------------------\n'
+    currentCommand += '---------+-----+-------+------\n'
     currentCommand += 'finger A | %3d |   %3d |   %3d\n' %(command.rPRA, command.rSPA, command.rFRA)
     currentCommand += 'finger B | %3d |   %3d |   %3d\n' %(command.rPRB, command.rSPB, command.rFRB)
     currentCommand += 'finger C | %3d |   %3d |   %3d\n' %(command.rPRC, command.rSPC, command.rFRC)
     currentCommand += 'scissor  | %3d |   %3d |   %3d\n' %(command.rPRS, command.rSPS, command.rFRS)
-    currentCommand += '------------------------------\n'
+    currentCommand += '---------+-----+-------+------\n'
 
     return currentCommand
 
