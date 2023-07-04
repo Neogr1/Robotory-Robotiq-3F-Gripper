@@ -67,7 +67,7 @@ def updateCurrentState(state):
         if state.gDTA != 0 and state.gDTB != 0 and state.gDTC != 0:
             current_state = GRASPED
 
-    pub_state.publish(current_state)
+    pub_state.publish(UInt8(current_state))
 
 
 # callback request
