@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """@package docstring
 get the state of Robotiq3FGripper and publish needed status as UINT8
@@ -35,6 +35,11 @@ GRASPED      = 0x02 # 0000 0010
 RELEASING    = 0x83 # 1000 0011
 RELEASED     = 0x03 # 0000 0011
 
+
+current_state = INACTIVATED
+command = Robotiq3FGripperRobotOutput()
+target_object = 0
+
 def isUnableToRequest():
     ### cannot request while fingers are moving or inactivated
     ### return the most significant bit of current_state
@@ -44,6 +49,8 @@ def isUnableToRequest():
 
 # callback state
 def updateCurrentState(state):
+    global current_state
+
     if current_state == ACTIVATING:
         if state.gACT == 1 and state.gIMC == 3:
             current_state = ACTIVATED
@@ -65,15 +72,16 @@ def updateCurrentState(state):
 
 # callback request
 def changeCommand(request):
-    global current_state
+    request = request.data
 
-    if isUnableToRequest():
+    global current_state, command, target_object
+
+    if request != ACTIVATED and isUnableToRequest():
         print("The request is ignored since the fingers are moving or the gripper is inactivated.")
         return
 
     # reset
     if request == INACTIVATED:
-        global command
         command = Robotiq3FGripperRobotOutput()
         command.rACT = 0
         current_state = INACTIVATED
@@ -123,15 +131,13 @@ def changeCommand(request):
 
 # callbaek object_id
 def setTargetObject(object_id):
+    object_id = object_id.data
+
     global target_object
     target_object = object_id
     print("Target object is set as the number", target_object)
 
 
-
-current_state = INACTIVATED
-command = Robotiq3FGripperRobotOutput()
-target_object = 0
 
 if __name__ == '__main__':
     rospy.init_node('RGripperController')

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 # Software License Agreement (BSD License)
@@ -185,7 +185,7 @@ def askForCommand(command):
     strAskForCommand += '\t4 - Georgia (vertical)\n'
     strAskForCommand += '-->'
 
-    return raw_input(strAskForCommand)
+    return input(strAskForCommand)
 
 
 def publisher():

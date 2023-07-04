@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 # Software License Agreement (BSD License)
@@ -257,7 +257,7 @@ def askForCommand(command):
     strAskForCommand += '    : Individual control of fingers or scissor axis\n'
     strAskForCommand += '-->'
 
-    return raw_input(strAskForCommand)
+    return input(strAskForCommand)
 
 
 def publisher():
