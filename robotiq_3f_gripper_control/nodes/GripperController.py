@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-"""@package docstring
-get the state of Robotiq3FGripper and publish needed status as UINT8
+"""
+get the state of Robotiq3FGripper and publish status as UINT8
+get request from main controller and publish the register command to the gripper
+get object id from main controller and set the target object
 """
 
 from __future__ import print_function
@@ -16,12 +18,12 @@ from robotiq_3f_gripper_articulated_msgs.msg import Robotiq3FGripperRobotOutput
 
 
 #            PRA-SPA-FRA    PRB-SPB-FRB    PRC-SPC-FRC    PRS-SPS-FRS
-OBJ_REQ = [((  0,255,150), (  0,255,150), (  0,255,150), (  0,255,150)), # 0. RELEASE
-           (( 50,255,150), ( 70,255,150), ( 70,255,150), (128,255,150)), # 1. cleaner
-           (( 98,255,150), ( 98,255,150), ( 98,255,150), (150,255,150)), # 2. driver
-           ((135,255,150), (138,255,150), (138,255,150), (137,255,150)), # 3. pringles
-           (( 70,255,150), ( 70,255,150), ( 70,255,150), (255,255,150)), # 4. banana
-           ((255,255,255), (255,255,255), (255,255,255), (137,255,150)), # 5. PET bottle
+OBJ_REQ = [((  0,  0,150), (  0,  0,150), (  0,  0,150), (  0,  0,150)), # 0. RELEASE
+           (( 50,  0,150), ( 70,  0,150), ( 70,  0,150), (128,  0,150)), # 1. cleaner
+           (( 98,  0,150), ( 98,  0,150), ( 98,  0,150), (150,  0,150)), # 2. driver
+           ((135,  0,150), (138,  0,150), (138,  0,150), (137,  0,150)), # 3. pringles
+           (( 70,  0,150), ( 70,  0,150), ( 70,  0,150), (255,  0,150)), # 4. banana
+           ((255,  0,255), (255,  0,255), (255,  0,255), (137,  0,150)), # 5. PET bottle
 ]
 
 # constants
@@ -37,6 +39,7 @@ RELEASED     = 0x03 # 0000 0011
 
 
 current_state = INACTIVATED
+current_request = INACTIVATED
 command = Robotiq3FGripperRobotOutput()
 target_object = 0
 
@@ -49,45 +52,57 @@ def isUnableToRequest():
 
 # callback state
 def updateCurrentState(state):
-    global current_state
+    global current_state, current_request
 
-    if current_state == ACTIVATING:
-        if state.gACT == 1 and state.gIMC == 3:
+    if current_request == ACTIVATED and current_state != ACTIVATED:
+        if current_state != ACTIVATING:
+            current_state = ACTIVATING
+        elif state.gACT == 1 and state.gIMC == 3: # activating done
             current_state = ACTIVATED
     
-    if current_state == RELEASING:
-        if state.gDTA != 0 and state.gDTB != 0 and state.gDTC != 0:
-            current_state = RELEASED
-    
-    if current_state == PRE_GRASPING:
-        if state.gDTS != 0:
+    if current_request == PRE_GRASPED and current_state != PRE_GRASPED:
+        if current_state != PRE_GRASPING:
+            current_state = PRE_GRASPING
+        elif state.gDTS != 0: # pre-grasping done
             current_state = PRE_GRASPED
     
-    if current_state == GRASPING:
-        if state.gDTA != 0 and state.gDTB != 0 and state.gDTC != 0:
+    if current_request == GRASPED and current_state != GRASPED:
+        if current_state != GRASPING:
+            current_state = GRASPING
+        elif state.gDTA != 0 and state.gDTB != 0 and state.gDTC != 0: # grasping done
             current_state = GRASPED
+    
+    if current_request == RELEASED and current_state != RELEASED:
+        if current_state != RELEASING:
+            current_state = RELEASING
+        elif state.gDTA != 0 and state.gDTB != 0 and state.gDTC != 0: # releasing done
+            current_state = RELEASED
 
     pub_state.publish(UInt8(current_state))
 
 
 # callback request
 def changeCommand(request):
-    request = request.data
+    global current_state, current_request, command, target_object
 
-    global current_state, command, target_object
+    print("Request: ", request.data)
 
-    if request != ACTIVATED and isUnableToRequest():
+    if request.data != ACTIVATED and isUnableToRequest():
         print("The request is ignored since the fingers are moving or the gripper is inactivated.")
         return
 
+    # able to request. update current request
+    current_request = request.data
+
+    print("State: %d, Request: %d" %(current_state, current_request))
+
     # reset
-    if request == INACTIVATED:
+    if current_request == INACTIVATED:
         command = Robotiq3FGripperRobotOutput()
-        command.rACT = 0
-        current_state = INACTIVATED
+        command.rACT = 0 # not needed, but for clarity
 
     # activate
-    if request == ACTIVATED:
+    if current_request == ACTIVATED:
         command.rACT = 1
         command.rGTO = 1
         command.rICF = 1
@@ -101,29 +116,25 @@ def changeCommand(request):
         command.rPRS = 137
         command.rSPS = 255
         command.rFRS = 150
-        current_state = ACTIVATING
 
     # pre-grasp
-    if request == PRE_GRASPED:
+    if current_request == PRE_GRASPED:
         command.rPRS, command.rSPS, command.rFRS = OBJ_REQ[target_object][3]
-        current_state = PRE_GRASPING
     
     # grasp
-    if request == GRASPED:
+    if current_request == GRASPED:
         command.rPRA, command.rSPA, command.rFRA = OBJ_REQ[target_object][0]
         command.rPRB, command.rSPB, command.rFRB = OBJ_REQ[target_object][1]
         command.rPRC, command.rSPC, command.rFRC = OBJ_REQ[target_object][2]
-        current_state = GRASPING
 
     # release
-    if request == RELEASED:
+    if current_request == RELEASED:
         ### This releasing procedure is not for scissor mode.
         ### If the gripper is on scissor mode, different releasing procedure is needed.
         target_object = 0
         command.rPRA, command.rSPA, command.rFRA = OBJ_REQ[target_object][0]
         command.rPRB, command.rSPB, command.rFRB = OBJ_REQ[target_object][1]
         command.rPRC, command.rSPC, command.rFRC = OBJ_REQ[target_object][2]
-        current_state = RELEASING
 
 
     pub_request.publish(command)
@@ -140,10 +151,10 @@ def setTargetObject(object_id):
 
 
 if __name__ == '__main__':
-    rospy.init_node('RGripperController')
+    rospy.init_node('GripperController')
 
     # state
-    pub_state = rospy.Publisher("/gripper_state", UInt8, queue_size=10)
+    pub_state = rospy.Publisher("/gripper_state", UInt8, queue_size=1)
     rospy.Subscriber("Robotiq3FGripperRobotInput", Robotiq3FGripperRobotInput, updateCurrentState)
 
     # request
