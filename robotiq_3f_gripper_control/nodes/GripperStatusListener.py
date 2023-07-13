@@ -37,7 +37,6 @@ def gripperStateListener(state):
 if __name__ == '__main__':
     rospy.init_node('GripperStateListener')
 
-    # state
     rospy.Subscriber('/gripper_state', UInt8, gripperStateListener)
 
     rospy.spin()

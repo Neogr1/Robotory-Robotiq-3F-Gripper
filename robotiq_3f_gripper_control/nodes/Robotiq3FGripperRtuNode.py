@@ -87,7 +87,6 @@ def mainLoop(address):
 
 if __name__ == '__main__':
     try:
-        # TODO: Add verification that the argument is an IP address
         mainLoop(sys.argv[1])
     except rospy.ROSInterruptException:
         pass

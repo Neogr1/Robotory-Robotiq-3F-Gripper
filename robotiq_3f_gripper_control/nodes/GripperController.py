@@ -16,14 +16,14 @@ from std_msgs.msg import UInt8
 from robotiq_3f_gripper_articulated_msgs.msg import Robotiq3FGripperRobotInput
 from robotiq_3f_gripper_articulated_msgs.msg import Robotiq3FGripperRobotOutput
 
-
+# required finger states for each object
 #            PRA-SPA-FRA    PRB-SPB-FRB    PRC-SPC-FRC    PRS-SPS-FRS
-OBJ_REQ = [((  0,  0,150), (  0,  0,150), (  0,  0,150), (  0,  0,150)), # 0. RELEASE
-           (( 50,  0,150), ( 70,  0,150), ( 70,  0,150), (128,  0,150)), # 1. cleaner
-           (( 98,  0,150), ( 98,  0,150), ( 98,  0,150), (150,  0,150)), # 2. driver
-           ((135,  0,150), (138,  0,150), (138,  0,150), (137,  0,150)), # 3. pringles
-           (( 70,  0,150), ( 70,  0,150), ( 70,  0,150), (255,  0,150)), # 4. banana
-           ((255,  0,255), (255,  0,255), (255,  0,255), (137,  0,150)), # 5. PET bottle
+OBJ_REQ = [((  0,255,150), (  0,255,150), (  0,255,150), (  0,255,150)), # 0. RELEASE
+           (( 50,255,150), ( 70,255,150), ( 70,255,150), (128,255,150)), # 1. cleaner
+           (( 98,255,150), ( 98,255,150), ( 98,255,150), (150,255,150)), # 2. driver
+           ((135,255,150), (138,255,150), (138,255,150), (137,255,150)), # 3. pringles
+           (( 70,255,150), ( 70,255,150), ( 70,255,150), (255,255,150)), # 4. banana
+           ((255,255,255), (255,255,255), (255,255,255), (137,255,150)), # 5. PET bottle
 ]
 
 # constants
@@ -38,17 +38,10 @@ RELEASING    = 0x83 # 1000 0011
 RELEASED     = 0x03 # 0000 0011
 
 
-current_state = INACTIVATED
-current_request = INACTIVATED
-command = Robotiq3FGripperRobotOutput()
-target_object = 0
-
 def isUnableToRequest():
     ### cannot request while fingers are moving or inactivated
     ### return the most significant bit of current_state
     return (current_state & 0x80) >> 7
-
-
 
 # callback state
 def updateCurrentState(state):
@@ -94,8 +87,6 @@ def changeCommand(request):
     # able to request. update current request
     current_request = request.data
 
-    print("State: %d, Request: %d" %(current_state, current_request))
-
     # reset
     if current_request == INACTIVATED:
         command = Robotiq3FGripperRobotOutput()
@@ -131,7 +122,7 @@ def changeCommand(request):
     if current_request == RELEASED:
         ### This releasing procedure is not for scissor mode.
         ### If the gripper is on scissor mode, different releasing procedure is needed.
-        target_object = 0
+        target_object = 0 # set target as RELEASE
         command.rPRA, command.rSPA, command.rFRA = OBJ_REQ[target_object][0]
         command.rPRB, command.rSPB, command.rFRB = OBJ_REQ[target_object][1]
         command.rPRC, command.rSPC, command.rFRC = OBJ_REQ[target_object][2]
@@ -149,6 +140,11 @@ def setTargetObject(object_id):
     print("Target object is set as the number", target_object)
 
 
+# initialize
+current_state = INACTIVATED
+current_request = INACTIVATED
+command = Robotiq3FGripperRobotOutput()
+target_object = 0
 
 if __name__ == '__main__':
     rospy.init_node('GripperController')
