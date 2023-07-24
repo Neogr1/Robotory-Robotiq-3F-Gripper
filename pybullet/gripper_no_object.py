@@ -10,26 +10,24 @@ p.setAdditionalSearchPath(pybullet_data.getDataPath())
 planeId = p.loadURDF("plane.urdf")
 gripperId = p.loadURDF("robotiq-3f-gripper_articulated.urdf", basePosition=[0,0,0.05], baseOrientation=[1,0,0,1], useFixedBase=True)
 
-# joint_index = -1  # Replace with the actual index of the joint you want to adjust
-
-num_joints = p.getNumJoints(gripperId)
-
+# num_joints = p.getNumJoints(gripperId)
 '''
 [joints]
- 0 palm_finger_1_joint
- 1 finger_1_joint_1
- 2 finger_1_joint_2
- 3 finger_1_joint_3
- 4 palm_finger_2_joint
- 5 finger_2_joint_1
- 6 finger_2_joint_2
- 7 finger_2_joint_3
- 8 palm_finger_middle_joint
- 9 finger_middle_joint_1
-10 finger_middle_joint_2
-11 finger_middle_joint_3
+ 0 palm_finger_C_joint
+ 1 finger_C_joint_1
+ 2 finger_C_joint_2
+ 3 finger_C_joint_3
+ 4 palm_finger_B_joint
+ 5 finger_B_joint_1
+ 6 finger_B_joint_2
+ 7 finger_B_joint_3
+ 8 palm_finger_A_joint
+ 9 finger_A_joint_1
+10 finger_A_joint_2
+11 finger_A_joint_3
 '''
 
+COEF_SCISSORS = 26 / 220
 COEF_JOINT_1 = 62 / 140
 COEF_JOINT_2 = 90 / 100
 
@@ -39,7 +37,7 @@ rPOC_slider = p.addUserDebugParameter("rPOC", 0, 255, 0)
 rPOS_slider = p.addUserDebugParameter("rPOS", 0, 255, 137)
 rICF_slider = p.addUserDebugParameter("rICF", 0, 1, 0)
 
-p.addUserDebugText("test",[0.1,0.1,0.1], textColorRGB=[0,0,0], textSize=10)
+# p.addUserDebugText("test",[0.1,0.1,0.1], textColorRGB=[0,0,0], textSize=10)
 
 while 1:
     rPOA = p.readUserDebugParameter(rPOA_slider)
@@ -48,38 +46,40 @@ while 1:
     rPOS = p.readUserDebugParameter(rPOS_slider)
     rICF = p.readUserDebugParameter(rICF_slider)
 
-    f1_0 = min(rPOS, 220) / 220 * 26 - 16
-    f2_0 = -f1_0
-    fm_0 = 0
+    # position of scissor axis
+    fa0 = 0
+    fb0 = COEF_SCISSORS * min(rPOS, 220) - 16
+    fc0 = -fb0
 
-    fm_1 = COEF_JOINT_1 * min(rPOA, 140) + 8
-    fm_2 = COEF_JOINT_2 * min(max(rPOA-140, 0), 100)
-    fm_3 = - COEF_JOINT_1 * min(rPOA, 110)
+    # position of finger A
+    fa1 = COEF_JOINT_1 * min(rPOA, 140) + 8
+    fa2 = COEF_JOINT_2 * min(max(rPOA-140, 0), 100)
+    fa3 = - COEF_JOINT_1 * min(rPOA, 110)
 
+    # individual control of fingers
     if rICF < 0.5:
-        f1_1, f1_2, f1_3 = fm_1, fm_2, fm_3
-        f2_1, f2_2, f2_3 = fm_1, fm_2, fm_3
+        fb1, fb2, fb3 = fa1, fa2, fa3
+        fc1, fc2, fc3 = fa1, fa2, fa3
     else:
-        f1_1 = COEF_JOINT_1 * min(rPOC, 140) + 8
-        f1_2 = COEF_JOINT_2 * min(max(rPOC-140, 0), 100)
-        f1_3 = - COEF_JOINT_1 * min(rPOC, 110)
-        f2_1 = COEF_JOINT_1 * min(rPOB, 140) + 8
-        f2_2 = COEF_JOINT_2 * min(max(rPOB-140, 0), 100)
-        f2_3 = - COEF_JOINT_1 * min(rPOB, 110)
+        fb1 = COEF_JOINT_1 * min(rPOB, 140) + 8
+        fb2 = COEF_JOINT_2 * min(max(rPOB-140, 0), 100)
+        fb3 = - COEF_JOINT_1 * min(rPOB, 110)
+        fc1 = COEF_JOINT_1 * min(rPOC, 140) + 8
+        fc2 = COEF_JOINT_2 * min(max(rPOC-140, 0), 100)
+        fc3 = - COEF_JOINT_1 * min(rPOC, 110)
     
-
-    p.setJointMotorControl2(gripperId,  0, p.POSITION_CONTROL, targetPosition=math.radians(f1_0))
-    p.setJointMotorControl2(gripperId,  1, p.POSITION_CONTROL, targetPosition=math.radians(f1_1))
-    p.setJointMotorControl2(gripperId,  2, p.POSITION_CONTROL, targetPosition=math.radians(f1_2))
-    p.setJointMotorControl2(gripperId,  3, p.POSITION_CONTROL, targetPosition=math.radians(f1_3))
-    p.setJointMotorControl2(gripperId,  4, p.POSITION_CONTROL, targetPosition=math.radians(f2_0))
-    p.setJointMotorControl2(gripperId,  5, p.POSITION_CONTROL, targetPosition=math.radians(f2_1))
-    p.setJointMotorControl2(gripperId,  6, p.POSITION_CONTROL, targetPosition=math.radians(f2_2))
-    p.setJointMotorControl2(gripperId,  7, p.POSITION_CONTROL, targetPosition=math.radians(f2_3))
-    p.setJointMotorControl2(gripperId,  8, p.POSITION_CONTROL, targetPosition=math.radians(fm_0))
-    p.setJointMotorControl2(gripperId,  9, p.POSITION_CONTROL, targetPosition=math.radians(fm_1))
-    p.setJointMotorControl2(gripperId, 10, p.POSITION_CONTROL, targetPosition=math.radians(fm_2))
-    p.setJointMotorControl2(gripperId, 11, p.POSITION_CONTROL, targetPosition=math.radians(fm_3))
+    p.setJointMotorControl2(gripperId,  8, p.POSITION_CONTROL, targetPosition=math.radians(fa0))
+    p.setJointMotorControl2(gripperId,  9, p.POSITION_CONTROL, targetPosition=math.radians(fa1))
+    p.setJointMotorControl2(gripperId, 10, p.POSITION_CONTROL, targetPosition=math.radians(fa2))
+    p.setJointMotorControl2(gripperId, 11, p.POSITION_CONTROL, targetPosition=math.radians(fa3))
+    p.setJointMotorControl2(gripperId,  4, p.POSITION_CONTROL, targetPosition=math.radians(fb0))
+    p.setJointMotorControl2(gripperId,  5, p.POSITION_CONTROL, targetPosition=math.radians(fb1))
+    p.setJointMotorControl2(gripperId,  6, p.POSITION_CONTROL, targetPosition=math.radians(fb2))
+    p.setJointMotorControl2(gripperId,  7, p.POSITION_CONTROL, targetPosition=math.radians(fb3))
+    p.setJointMotorControl2(gripperId,  0, p.POSITION_CONTROL, targetPosition=math.radians(fc0))
+    p.setJointMotorControl2(gripperId,  1, p.POSITION_CONTROL, targetPosition=math.radians(fc1))
+    p.setJointMotorControl2(gripperId,  2, p.POSITION_CONTROL, targetPosition=math.radians(fc2))
+    p.setJointMotorControl2(gripperId,  3, p.POSITION_CONTROL, targetPosition=math.radians(fc3))
 
     p.stepSimulation()
     time.sleep(0.1)

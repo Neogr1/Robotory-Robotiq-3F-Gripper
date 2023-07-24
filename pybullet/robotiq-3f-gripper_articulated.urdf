@@ -18,7 +18,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
     <color rgba="0 1 1 1"/>
   </material>
 
-  <link name="finger_1_link_0">
+  <link name="finger_C_link_0">
     <visual>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
@@ -39,7 +39,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.01" ixy="-0.00002" ixz="0.00001" iyy="0.0008" iyz="0" izz="0.001"/>
     </inertial>
   </link>
-  <link name="finger_1_link_1">
+  <link name="finger_C_link_1">
     <visual>
       <origin rpy="0 0 -0.47124" xyz="0.050 -.028 0"/>
       <geometry>
@@ -60,7 +60,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024"/>
     </inertial>
   </link>
-  <link name="finger_1_link_2">
+  <link name="finger_C_link_2">
     <!--
 			NOTE: This link has an offset in the z-direction based on the models that were
 			used to generate grap-it poses.  With the offset below the model appears visually
@@ -86,7 +86,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024"/>
     </inertial>
   </link>
-  <link name="finger_1_link_3">
+  <link name="finger_C_link_3">
     <visual>
       <origin rpy="0 0 0.47124" xyz="0 0 0"/>
       <geometry>
@@ -107,29 +107,29 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001239" ixy="-0.000251" ixz="0.000019" iyy="0.00085" iyz="0" izz="0.001632"/>
     </inertial>
   </link>
-  <joint name="finger_1_joint_1" type="revolute">
-    <parent link="finger_1_link_0"/>
-    <child link="finger_1_link_1"/>
+  <joint name="finger_C_joint_1" type="revolute">
+    <parent link="finger_C_link_0"/>
+    <child link="finger_C_link_1"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.020 0 0"/>
     <limit effort="100" lower="0" upper="1.2217" velocity="100"/> <!-- 0 to 70 deg -->
   </joint>
-  <joint name="finger_1_joint_2" type="revolute">
-    <parent link="finger_1_link_1"/>
-    <child link="finger_1_link_2"/>
+  <joint name="finger_C_joint_2" type="revolute">
+    <parent link="finger_C_link_1"/>
+    <child link="finger_C_link_2"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 -0.47124" xyz="0.050 -.028 0"/>
     <limit effort="100" lower="0" upper="1.5708" velocity="100"/> <!-- 0 to 90 deg -->
   </joint>
-  <joint name="finger_1_joint_3" type="revolute">
-    <parent link="finger_1_link_2"/>
-    <child link="finger_1_link_3"/>
+  <joint name="finger_C_joint_3" type="revolute">
+    <parent link="finger_C_link_2"/>
+    <child link="finger_C_link_3"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.039 0 0"/>
     <limit effort="100" lower="-0.90757" upper="0.80285" velocity="100"/> <!-- -52 to 46 deg -->
   </joint>
 
-  <link name="finger_2_link_0">
+  <link name="finger_B_link_0">
     <visual>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
@@ -150,7 +150,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.01" ixy="-0.00002" ixz="0.00001" iyy="0.0008" iyz="0" izz="0.001"/>
     </inertial>
   </link>
-  <link name="finger_2_link_1">
+  <link name="finger_B_link_1">
     <visual>
       <origin rpy="0 0 -0.47124" xyz="0.050 -.028 0"/>
       <geometry>
@@ -171,7 +171,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024"/>
     </inertial>
   </link>
-  <link name="finger_2_link_2">
+  <link name="finger_B_link_2">
     <!--
 			NOTE: This link has an offset in the z-direction based on the models that were
 			used to generate grap-it poses.  With the offset below the model appears visually
@@ -197,7 +197,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024"/>
     </inertial>
   </link>
-  <link name="finger_2_link_3">
+  <link name="finger_B_link_3">
     <visual>
       <origin rpy="0 0 0.47124" xyz="0 0 0"/>
       <geometry>
@@ -218,29 +218,29 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001239" ixy="-0.000251" ixz="0.000019" iyy="0.00085" iyz="0" izz="0.001632"/>
     </inertial>
   </link>
-  <joint name="finger_2_joint_1" type="revolute">
-    <parent link="finger_2_link_0"/>
-    <child link="finger_2_link_1"/>
+  <joint name="finger_B_joint_1" type="revolute">
+    <parent link="finger_B_link_0"/>
+    <child link="finger_B_link_1"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.020 0 0"/>
     <limit effort="100" lower="0" upper="1.2217" velocity="100"/> <!-- 0 to 70 deg -->
   </joint>
-  <joint name="finger_2_joint_2" type="revolute">
-    <parent link="finger_2_link_1"/>
-    <child link="finger_2_link_2"/>
+  <joint name="finger_B_joint_2" type="revolute">
+    <parent link="finger_B_link_1"/>
+    <child link="finger_B_link_2"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 -0.47124" xyz="0.050 -.028 0"/>
     <limit effort="100" lower="0" upper="1.5708" velocity="100"/> <!-- 0 to 90 deg -->
   </joint>
-  <joint name="finger_2_joint_3" type="revolute">
-    <parent link="finger_2_link_2"/>
-    <child link="finger_2_link_3"/>
+  <joint name="finger_B_joint_3" type="revolute">
+    <parent link="finger_B_link_2"/>
+    <child link="finger_B_link_3"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.039 0 0"/>
     <limit effort="100" lower="-0.90757" upper="0.80285" velocity="100"/> <!-- -52 to 46 deg -->
   </joint>
 
-  <link name="finger_middle_link_0">
+  <link name="finger_A_link_0">
     <visual>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
@@ -261,7 +261,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.01" ixy="-0.00002" ixz="0.00001" iyy="0.0008" iyz="0" izz="0.001"/>
     </inertial>
   </link>
-  <link name="finger_middle_link_1">
+  <link name="finger_A_link_1">
     <visual>
       <origin rpy="0 0 -0.47124" xyz="0.050 -.028 0"/>
       <geometry>
@@ -282,7 +282,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024"/>
     </inertial>
   </link>
-  <link name="finger_middle_link_2">
+  <link name="finger_A_link_2">
     <!--
 			NOTE: This link has an offset in the z-direction based on the models that were
 			used to generate grap-it poses.  With the offset below the model appears visually
@@ -308,7 +308,7 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024"/>
     </inertial>
   </link>
-  <link name="finger_middle_link_3">
+  <link name="finger_A_link_3">
     <visual>
       <origin rpy="0 0 0.47124" xyz="0 0 0"/>
       <geometry>
@@ -329,23 +329,23 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.001239" ixy="-0.000251" ixz="0.000019" iyy="0.00085" iyz="0" izz="0.001632"/>
     </inertial>
   </link>
-  <joint name="finger_middle_joint_1" type="revolute">
-    <parent link="finger_middle_link_0"/>
-    <child link="finger_middle_link_1"/>
+  <joint name="finger_A_joint_1" type="revolute">
+    <parent link="finger_A_link_0"/>
+    <child link="finger_A_link_1"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.020 0 0"/>
     <limit effort="100" lower="0" upper="1.2217" velocity="100"/> <!-- 0 to 70 deg -->
   </joint>
-  <joint name="finger_middle_joint_2" type="revolute">
-    <parent link="finger_middle_link_1"/>
-    <child link="finger_middle_link_2"/>
+  <joint name="finger_A_joint_2" type="revolute">
+    <parent link="finger_A_link_1"/>
+    <child link="finger_A_link_2"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 -0.47124" xyz="0.050 -.028 0"/>
     <limit effort="100" lower="0" upper="1.5708" velocity="100"/> <!-- 0 to 90 deg -->
   </joint>
-  <joint name="finger_middle_joint_3" type="revolute">
-    <parent link="finger_middle_link_2"/>
-    <child link="finger_middle_link_3"/>
+  <joint name="finger_A_joint_3" type="revolute">
+    <parent link="finger_A_link_2"/>
+    <child link="finger_A_link_3"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.039 0 0"/>
     <limit effort="100" lower="-0.90757" upper="0.80285" velocity="100"/> <!-- -52 to 46 deg -->
@@ -369,23 +369,23 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
       <inertia ixx="0.006012" ixy="0.000079" ixz="-0.00024" iyy="0.012892" iyz="0" izz="0.002435"/>
     </inertial>
   </link>
-  <joint name="palm_finger_1_joint" type="revolute">
+  <joint name="palm_finger_C_joint" type="revolute">
     <parent link="palm"/>
-    <child link="finger_1_link_0"/>
+    <child link="finger_C_link_0"/>
     <axis xyz="0 1 0"/>
     <origin rpy="0 3.1416 -1.5708" xyz="-0.0455 0.0214 0.036"/>
     <limit effort="100" lower="-0.17453" upper="0.27925" velocity="100"/> <!-- -10 to 16 deg -->
   </joint>
-  <joint name="palm_finger_2_joint" type="revolute">
+  <joint name="palm_finger_B_joint" type="revolute">
     <parent link="palm"/>
-    <child link="finger_2_link_0"/>
+    <child link="finger_B_link_0"/>
     <axis xyz="0 1 0"/>
     <origin rpy="0 3.1416 -1.5708" xyz="-0.0455 0.0214 -0.036"/>
     <limit effort="100" lower="-0.27925" upper="0.17453" velocity="100"/> <!-- -16 to 10 deg -->
   </joint>
-  <joint name="palm_finger_middle_joint" type="fixed">
+  <joint name="palm_finger_A_joint" type="fixed">
     <parent link="palm"/>
-    <child link="finger_middle_link_0"/>
+    <child link="finger_A_link_0"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 1.5708" xyz="0.0455 0.0214 0"/>
   </joint>
